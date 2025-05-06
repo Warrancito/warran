@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Finanzas Personales</title>
+    <style>
+        /* --- Estilos Generales --- */
+body {
+    font-family: sans-serif; /* Fuente simple y legible */
+    line-height: 1.6; /* Espaciado entre líneas */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Fondo gris claro */
+    color: #333; /* Color principal del texto */
+}
+
+header {
+    background: #333; /* Fondo oscuro para el encabezado */
+    color: #fff; /* Texto blanco */
+    padding: 1rem 0; /* Espaciado interno */
+    text-align: center; /* Centrar texto */
+    margin-bottom: 20px; /* Espacio debajo del encabezado */
+}
+
+.container {
+    width: 90%; /* Ancho del contenido */
+    max-width: 960px; /* Ancho máximo */
+    margin: auto; /* Centrar el contenedor */
+    display: grid; /* Usar Grid para un layout flexible */
+    /* Define columnas: repite columnas de ajuste automático (min 300px, max 1fr) */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px; /* Espacio entre las celdas del grid */
+    padding-bottom: 20px; /* Espacio al final del contenedor */
+}
+
+/* Estilos básicos para cada sección (tarjeta) */
+.card {
+    background: #fff; /* Fondo blanco */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+    display: flex; /* Usar Flexbox para organizar contenido interno */
+    flex-direction: column; /* Elementos apilados verticalmente */
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #555; /* Color más oscuro para subtítulos */
+    border-bottom: 1px solid #eee; /* Línea divisoria */
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Estilos para formularios, inputs y selects */
+.form-group {
+    margin-bottom: 15px; /* Espacio debajo de cada grupo de formulario */
+}
+
+.form-group label {
+    display: block; /* Cada label en su propia línea */
+    margin-bottom: 5px; /* Espacio debajo del label */
+    font-weight: bold; /* Texto en negrita */
+}
+
+.form-group input:not([type="checkbox"]), /* Selecciona inputs excepto checkboxes */
+.form-group select,
+.salario-input input[type="number"] {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluir padding y borde en el ancho total */
+}
+
+/* Estilos generales para botones */
+button {
+    padding: 10px 15px;
+    background-color: #007bff; /* Azul */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; /* Cursor de mano al pasar el mouse */
+    transition: background-color 0.3s ease; /* Transición suave en hover */
+}
+
+button:hover {
+    background-color: #0056b3; /* Azul más oscuro en hover */
+}
+
+/* Ajuste específico para el botón de guardar salario */
+.salario-input button {
+    background-color: #28a745; /* Verde */
+}
+.salario-input button:hover {
+    background-color: #218838; /* Verde más oscuro */
+}
+
+
+/* Estilos para la sección de Saldo */
+.saldo-section .saldo-display p {
+    margin: 5px 0;
+    font-size: 1.1em; /* Tamaño de fuente un poco más grande */
+}
+
+.saldo-section .saldo-display span {
+    font-weight: bold; /* Montos en negrita */
+    color: #007bff; /* Color azul para los montos (generalmente positivos) */
+}
+
+#saldoRestante {
+    color: green; /* Color verde por defecto (para saldo positivo) */
+}
+#saldoRestante.negative { color: red; } /* Color rojo para saldo negativo (clase añadida por JS) */
+
+
+.salario-input {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    display: flex; /* Usar Flexbox */
+    gap: 10px; /* Espacio entre label, input y botón */
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
+    align-items: center; /* Alinear verticalmente */
+}
+
+.salario-input label { flex-shrink: 0; } /* Evita que la label se encoja si no hay espacio */
+.salario-input input[type="number"] { flex-grow: 1; } /* Permite que el input crezca */
+
+
+/* Estilos para el listado de Gastos */
+#gastosList {
+    list-style: none; /* Quitar viñetas de la lista */
+    padding: 0;
+    margin: 0;
+}
+
+#gastosList li {
+    background: #f9f9f9; /* Fondo ligeramente gris para cada item */
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 8px; /* Espacio entre items */
+    display: flex; /* Usar Flexbox para la disposición interna */
+    justify-content: space-between; /* Pone espacio máximo entre info y fecha/botón */
+    align-items: center; /* Alinear verticalmente */
+    flex-wrap: wrap; /* Permite que el contenido se envuelva en pantallas pequeñas */
+    position: relative; /* Para posicionar el botón de eliminar en móvil */
+}
+
+#gastosList li .gasto-info {
+    flex-grow: 1; /* Permite que la descripción y monto crezcan */
+    margin-right: 10px; /* Espacio antes de la fecha/botón */
+}
+
+#gastosList li .gasto-description {
+    font-weight: bold; /* Descripción en negrita */
+    margin-right: 10px; /* Espacio entre descripción y monto */
+}
+
+#gastosList li .gasto-amount {
+    color: #dc3545; /* Rojo para el monto del gasto */
+    font-weight: bold;
+}
+
+#gastosList li .gasto-date {
+    font-size: 0.9em; /* Tamaño de fuente más pequeño para la fecha */
+    color: #777; /* Color gris para la fecha */
+}
+
+/* Estilo para el botón de eliminar dentro de cada item de gasto */
+#gastosList li .delete-btn {
+    background: none; /* Sin fondo */
+    border: none; /* Sin borde */
+    color: #dc3545; /* Color rojo */
+    cursor: pointer;
+    font-size: 1.2em; /* Tamaño del icono */
+    margin-left: 10px; /* Espacio a la izquierda del botón */
+    padding: 0; /* Sin padding */
+}
+#gastosList li .delete-btn:hover {
+    color: #c82333; /* Rojo más oscuro en hover */
+}
+
+/* Estilo para el mensaje cuando no hay gastos */
+#gastosList .no-gastos {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+
+/* Estilos para los contenedores de gráfico y calendario */
+.charts-section #gastosChartContainer,
+.calendar-section #calendarContainer {
+    margin-top: 15px;
+    /* Estilos adicionales si usas librerías específicas (ej: para el tamaño del canvas) */
+}
+
+/* Estilo para las notas debajo de las secciones (ej: explicación de gráfico/calendario) */
+.card .note {
+    font-size: 0.9em;
+    color: #777;
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #eee; /* Línea punteada */
+}
+
+
+/* --- Estilos para el Calendario Básico --- */
+.calendar {
+    width: 100%;
+    border-collapse: collapse; /* Elimina espacio entre bordes de celdas */
+    margin-top: 10px;
+    /* Puedes añadir overflow: hidden; si las celdas se llenan mucho */
+}
+
+.calendar th, .calendar td {
+    text-align: center; /* Centrar texto por defecto */
+    padding: 5px;
+    border: 1px solid #eee; /* Borde de celdas */
+}
+
+.calendar th {
+    background-color: #f0f0f0; /* Fondo gris claro para encabezados */
+    font-weight: bold;
+    color: #555;
+}
+
+.calendar td {
+    height: 50px; /* Altura fija para las celdas de día */
+    width: calc(100% / 7); /* Ancho para que 7 celdas ocupen el 100% */
+    vertical-align: top; /* Alinear contenido arriba en la celda */
+    text-align: left; /* Alinear texto a la izquierda (para número del día) */
+    padding: 5px; /* Espaciado interno */
+    cursor: default; /* Cursor por defecto */
+    position: relative; /* Para posicionar elementos internos (ej: número del día) */
+    overflow: hidden; /* Oculta contenido extra (ej: si hay muchos gastos en un día) */
+    font-size: 0.9em; /* Tamaño de fuente */
+}
+
+.calendar td:hover {
+     background-color: #e9e9e9; /* Fondo más claro al pasar el mouse */
+}
+
+.calendar td.empty {
+    background-color: #f9f9f9; /* Fondo diferente para celdas vacías */
+    pointer-events: none; /* No interactúan con el mouse */
+}
+
+/* Estilo para el número del día dentro de la celda */
+.calendar td .day-number {
+     position: absolute; /* Posicionar absolutamente */
+     top: 5px; left: 5px; /* Posición desde la esquina superior izquierda de la celda */
+     font-size: 0.8em;
+     color: #777;
+     font-weight: bold;
+}
+
+/* Estilo para resaltar los días con gastos (clase añadida por JS) */
+.calendar td.has-expense {
+    background-color: #ffdaaa; /* Fondo naranja claro */
+    border-color: #ffb74d; /* Borde naranja */
+    font-weight: bold; /* Texto en negrita */
+    color: #333; /* Texto más oscuro */
+}
+
+.calendar td.has-expense .day-number {
+     color: #333; /* Asegurar que el número del día sea oscuro en días resaltados */
+}
+
+/* Estilo para el encabezado del mes/año en el calendario (generado por JS) */
+.calendar-header {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 1rem 0;
+    background: #333;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 768px) { /* Ajustar layout a una columna en pantallas medianas/pequeñas */
+    .container {
+        grid-template-columns: 1fr; /* Una sola columna */
+        gap: 15px; /* Reducir espacio entre tarjetas */
+        width: 95%; /* Usar más ancho en pantallas pequeñas */
+    }
+
+    .card { padding: 15px; } /* Reducir padding en tarjetas */
+
+    /* Ajustes para formularios y botones en pantallas pequeñas */
+    .salario-input {
+        flex-direction: column; /* Apilar elementos verticalmente */
+        align-items: stretch; /* Estirar elementos al ancho del contenedor */
+        gap: 8px; /* Reducir espacio entre elementos */
+    }
+    .salario-input input[type="number"] { max-width: 100%; } /* Permitir input ocupar todo el ancho */
+
+    /* Ajustes para el listado de gastos en pantallas pequeñas */
+    #gastosList li {
+        flex-direction: column; /* Apilar descripción/monto y fecha */
+        align-items: flex-start; /* Alinear al inicio */
+        gap: 5px; /* Espacio entre elementos apilados */
+        padding-right: 30px; /* Espacio a la derecha para el botón de eliminar absoluto */
+    }
+    #gastosList li .gasto-info { margin-right: 0; width: 100%; } /* Ocupar todo el ancho */
+    #gastosList li .gasto-date { width: 100%; text-align: right; font-size: 0.8em; } /* Fecha abajo a la derecha */
+    #gastosList li .delete-btn {
+        position: absolute; /* Posicionar absolutamente */
+        top: 5px; right: 5px; /* En la esquina superior derecha */
+        margin-left: 0; /* Eliminar margen izquierdo */
+    }
+
+    /* Ajustes para el calendario en pantallas pequeñas */
+    .calendar td {
+        height: 40px; /* Ajustar altura de celdas */
+        padding: 3px; /* Reducir padding */
+        font-size: 0.8em; /* Reducir tamaño de fuente */
+    }
+    .calendar td .day-number { top: 3px; left: 3px; font-size: 0.7em; } /* Ajustar posición y tamaño del número del día */
+    .calendar th { padding: 3px; font-size: 0.8em; } /* Ajustar encabezados */
+}
+.calendar td.has-expense:hover {
+    background-color: #ff9800; /* Fondo más oscuro al pasar el mouse sobre día con gasto */
+}
+    </style><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Control de Gastos y Salario</h1>
+    </header>
+
+    <main class="container">
+
+        <section class="saldo-section card">
+            <h2>Saldo Actual</h2>
+            <div class="saldo-display">
+                <p>Salario Ingresado: <span id="salarioTotal">0.00</span></p>
+                <p>Gastos Totales: <span id="gastosTotales">0.00</span></p>
+                <p>Saldo Restante: <span id="saldoRestante">0.00</span></p>
+            </div>
+
+            <div class="salario-input">
+                <label for="salarioMonto">Ingresar Salario:</label>
+                <input type="number" id="salarioMonto" placeholder="Ej: 1500.00" step="0.01">
+                <button id="guardarSalarioBtn">Guardar Salario</button>
+            </div>
+        </section>
+
+        <section class="gasto-input-section card">
+            <h2>Registrar Gasto</h2>
+            <form id="gastoForm">
+                <div class="form-group">
+                    <label for="gastoDescripcion">Descripción:</label>
+                    <input type="text" id="gastoDescripcion" required placeholder="Ej: Supermercado">
+                </div>
+                <div class="form-group">
+                    <label for="gastoMonto">Monto:</label>
+                    <input type="number" id="gastoMonto" required step="0.01" placeholder="Ej: 50.00">
+                </div>
+                <div class="form-group">
+                    <label for="gastoFecha">Fecha:</label>
+                    <input type="date" id="gastoFecha" required>
+                </div>
+                <button type="submit">Añadir Gasto</button>
+            </form>
+        </section>
+
+        <section class="gastos-list-section card">
+            <h2>Listado de Gastos</h2>
+            <ul id="gastosList">
+                <li class="no-gastos">Aún no hay gastos registrados.</li>
+            </ul>
+        </section>
+
+        <section class="charts-section card">
+             <h2>Gráfico de Gastos Mensuales</h2>
+             <div id="gastosChartContainer">
+                 <canvas id="gastosChart"></canvas>
+                 <p class="note">No hay datos de gastos para mostrar el gráfico.</p>
+             </div>
+        </section>
+
+        <section class="calendar-section card">
+             <h2>Calendario de Movimientos</h2>
+              <div id="calendarContainer">
+                 <p class="note">El calendario muestra el mes actual con días de gasto resaltados.</p>
+             </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Mis Finanzas Personales</p>
+    </footer>
+<script>
+    // --- Referencias a elementos del DOM ---
+const salarioTotalSpan = document.getElementById('salarioTotal');
+const gastosTotalesSpan = document.getElementById('gastosTotales');
+const saldoRestanteSpan = document.getElementById('saldoRestante');
+const salarioMontoInput = document.getElementById('salarioMonto');
+const guardarSalarioBtn = document.getElementById('guardarSalarioBtn');
+const gastoForm = document.getElementById('gastoForm');
+const gastoDescripcionInput = document.getElementById('gastoDescripcion');
+const gastoMontoInput = document.getElementById('gastoMonto');
+const gastoFechaInput = document.getElementById('gastoFecha');
+const gastosListUl = document.getElementById('gastosList');
+
+const gastosChartCanvas = document.getElementById('gastosChart'); // <<< Lienzo del gráfico de Chart.js
+const calendarContainerDiv = document.getElementById('calendarContainer'); // <<< Contenedor para el calendario
+
+// NOTA IMPORTANTE: Asegúrate de tener el script de Chart.js en tu archivo finanzas.html, generalmente en el <head>:
+// <script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+
+// --- Variables para almacenar los datos ---
+// Estos datos se cargarán/guardarán en el almacenamiento local del navegador.
+let salarioTotal = 0; // Almacenará el salario total ingresado.
+let gastos = []; // Array que contendrá todos los objetos de gasto. Cada objeto tendrá { id, descripcion, monto, fecha }.
+
+// Variable para mantener la instancia del gráfico de Chart.js, para poder destruirla y recrearla.
+let myChart = null;
+
+
+// --- Configuración de Moneda (¡AJUSTA ESTO SEGÚN TU PAÍS Y MONEDA!) ---
+// Estos códigos se usan para formatear los números como moneda local.
+// Busca el código de tu idioma/país y el código de tu moneda (ISO 4217).
+// Ejemplos:
+// España (Euro): const currencyLocale = 'es-ES'; const currencyCode = 'EUR';
+// México (Peso Mexicano): const currencyLocale = 'es-MX'; const currencyCode = 'MXN';
+// Colombia (Peso Colombiano): const currencyLocale = 'es-CO'; const currencyCode = 'COP';
+// Argentina (Peso Argentino): const currencyLocale = 'es-AR'; const currencyCode = 'ARS';
+// Perú (Sol Peruano): const currencyLocale = 'es-PE'; const currencyCode = 'PEN';
+const currencyLocale = 'es-PY'; // Por defecto, formato español de Paraguay
+const currencyCode = 'PYG'; // Por defecto, Guaraní Paraguayo
+
+
+// --- Funciones de Utilidad: Formatear Moneda ---
+// Formatea un número a string con el símbolo de moneda y formato local.
+function formatCurrency(amount) {
+    try {
+        // Usar Intl.NumberFormat es la forma recomendada para internacionalización
+        return new Intl.NumberFormat(currencyLocale, { style: 'currency', currency: currencyCode }).format(amount);
+    } catch (e) {
+        // Si Intl.NumberFormat falla (por ejemplo, navegador muy antiguo o código inválido),
+        // se usa un formato simple con 2 decimales y un símbolo '$'.
+        console.error("Error formatting currency with Intl:", e);
+        return `$${parseFloat(amount).toFixed(2)}`; // Fallback simple
+    }
+}
+
+
+// --- Funciones para Cargar y Guardar datos en localStorage ---
+
+// Carga los datos guardados del navegador (si existen) al iniciar la aplicación.
+function cargarDatos() {
+    const datosGuardados = localStorage.getItem('finanzasData'); // Intenta obtener el string guardado con la clave 'finanzasData'
+    if (datosGuardados) { // Si hay datos guardados
+        try {
+            const data = JSON.parse(datosGuardados); // Intenta convertir el string JSON a un objeto JavaScript
+
+            // Cargar el salario total, asegurando que sea un número (o 0 si no es válido)
+            salarioTotal = parseFloat(data.salarioTotal) || 0;
+
+            // Cargar el array de gastos, asegurando que sea realmente un array
+            if (Array.isArray(data.gastos)) {
+                 // Mapear el array cargado para limpiar y validar cada objeto gasto
+                 gastos = data.gastos.map(g => ({
+                    id: g.id || Date.now() + Math.random(), // Asegurar que cada gasto tenga un ID (si no lo tenía, genera uno nuevo simple)
+                    descripcion: g.descripcion ? String(g.descripcion) : 'Sin descripción', // Asegurar que la descripción es un string
+                    monto: parseFloat(g.monto) || 0, // Asegurar que el monto es un número flotante (o 0)
+                    // Asegurar que la fecha es un string y parece tener el formato YYYY-MM-DD
+                    fecha: g.fecha && typeof g.fecha === 'string' && g.fecha.match(/^\d{4}-\d{2}-\d{2}$/) ? g.fecha : 'AAAA-MM-DD' // Mantener la fecha si es válida, o usar un placeholder
+                 }));
+            } else {
+                 gastos = []; // Si los datos cargados para gastos no son un array válido, inicializar gastos como un array vacío
+                 console.warn("Los datos de gastos cargados de localStorage no son un array.");
+            }
+
+        } catch (e) {
+             // Si ocurre un error al parsear el JSON (los datos guardados están corruptos)
+             console.error("Error cargando datos de localStorage:", e);
+             alert("Hubo un error al cargar tus datos guardados. Se iniciará con datos vacíos para evitar problemas.");
+             // Reiniciar las variables a valores por defecto si la carga falla
+             salarioTotal = 0;
+             gastos = [];
+             // Opcional: Aquí podrías preguntar al usuario si quiere borrar los datos corruptos
+             // if (confirm("¿Quieres borrar los datos corruptos guardados en tu navegador?")) { localStorage.removeItem('finanzasData'); }
+        }
+    } else {
+        // Si no hay datos guardados en localStorage (es la primera vez que visita la página)
+        salarioTotal = 0; // Iniciar con salario 0
+        gastos = []; // Iniciar con lista de gastos vacía
+    }
+}
+
+// Guarda el estado actual de salarioTotal y gastos en el almacenamiento local del navegador.
+function guardarDatos() {
+    const data = {
+        // Guardar el salario total como string con 2 decimales para consistencia
+        salarioTotal: parseFloat(salarioTotal).toFixed(2),
+        // Mapear el array de gastos para asegurar que los montos se guardan como strings con 2 decimales
+        gastos: gastos.map(g => ({
+            id: g.id, // Mantener el ID
+            descripcion: String(g.descripcion), // Asegurar string
+            monto: parseFloat(g.monto).toFixed(2), // Asegurar monto como string con 2 decimales
+            fecha: String(g.fecha) // Asegurar string
+        }))
+    };
+    // Convertir el objeto 'data' a una cadena JSON y guardarla en localStorage
+    localStorage.setItem('finanzasData', JSON.stringify(data));
+
+    // Después de guardar los datos, actualizar todas las partes de la interfaz para reflejar los cambios
+    actualizarSaldos(); // Actualiza los displays de salario, gastos totales y saldo
+    renderizarGastos(); // Vuelve a dibujar la lista de gastos
+    renderizarGraficos(); // Vuelve a dibujar el gráfico
+    renderizarCalendario(); // Vuelve a dibujar el calendario
+}
+
+
+// --- Funciones para Actualizar la Interfaz y Cálculos ---
+
+// Calcula la suma total de todos los montos de los gastos registrados.
+function calcularGastosTotales() {
+    let total = 0;
+    // Asegurar que 'gastos' es un array antes de intentar iterar
+    if (Array.isArray(gastos)) {
+        // Iterar sobre cada gasto y sumar su monto (convertido a número)
+        gastos.forEach(gasto => {
+            const monto = parseFloat(gasto.monto); // Asegurar que el monto es un número válido
+             if (!isNaN(monto)) {
+               total += monto; // Sumar el monto al total
+            }
+        });
+    }
+    return total; // Retorna la suma total como número
+}
+
+// Calcula el saldo restante restando el total de gastos del salario total.
+function calcularSaldoRestante() {
+    const totalGastos = calcularGastosTotales(); // Obtener el total de gastos
+    const salario = parseFloat(salarioTotal); // Asegurar que el salario es un número
+
+    if (isNaN(salario)) {
+        return -totalGastos; // Si el salario no es un número válido, el saldo es simplemente los gastos en negativo
+    }
+
+    return salario - totalGastos; // Retorna el resultado de la resta
+}
+
+// Actualiza los elementos HTML que muestran el salario, total de gastos y saldo restante.
+function actualizarSaldos() {
+    const totalGastos = calcularGastosTotales(); // Calcular el total de gastos
+    const saldoRestante = calcularSaldoRestante(); // Calcular el saldo restante
+
+    // Actualizar el texto de los elementos <span> con los valores formateados como moneda
+    salarioTotalSpan.textContent = formatCurrency(salarioTotal); // Usa la función de formato de moneda
+    gastosTotalesSpan.textContent = formatCurrency(totalGastos); // Usa la función de formato de moneda
+    saldoRestanteSpan.textContent = formatCurrency(saldoRestante); // Usa la función de formato de moneda
+
+    // Cambiar el color del saldo restante si es negativo, quitando primero la clase por si acaso
+    saldoRestanteSpan.classList.remove('negative');
+    if (saldoRestante < 0) {
+        saldoRestanteSpan.classList.add('negative'); // Añade la clase CSS 'negative' si el saldo es menor que 0
+    }
+}
+
+// Renderiza la lista de todos los gastos en el elemento <ul> con el id 'gastosList'.
+function renderizarGastos() {
+    // Limpiar el contenido actual de la lista
+    gastosListUl.innerHTML = '';
+
+    // Asegurar que 'gastos' es un array y verificar si está vacío
+    if (!Array.isArray(gastos) || gastos.length === 0) {
+        const li = document.createElement('li');
+        li.classList.add('no-gastos'); // Añadir clase para estilo de mensaje
+        li.textContent = 'Aún no hay gastos registrados.'; // Mensaje a mostrar
+        gastosListUl.appendChild(li); // Añadir el mensaje a la lista
+        return; // Salir de la función ya que no hay gastos para listar
+    }
+
+    // Ordenar el array 'gastos' por fecha en orden descendente (más reciente primero)
+    // Comparar fechas como objetos Date
+    gastos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+    // Iterar sobre el array de gastos ordenado y crear un elemento de lista (<li>) para cada uno
+    gastos.forEach(gasto => {
+        const li = document.createElement('li'); // Crear un nuevo elemento <li>
+        li.dataset.id = gasto.id; // Almacenar el ID del gasto en un atributo de datos (data-id) del <li>
+
+        // Asegurar que el monto se formatea a 2 decimales antes de mostrar
+        const montoFormateado = parseFloat(gasto.monto).toFixed(2);
+
+        // Construir el HTML interno del elemento <li>
+        li.innerHTML = `
+            <div class="gasto-info">
+                <span class="gasto-description">${gasto.descripcion}</span>:
+                <span class="gasto-amount">-${formatCurrency(montoFormateado)}</span> </div>
+            <div class="gasto-date">${gasto.fecha}</div> <button class="delete-btn" aria-label="Eliminar gasto">✖</button> `;
+
+        gastosListUl.appendChild(li); // Añadir el elemento <li> creado a la lista (<ul>) en el HTML
+    });
+}
+
+// --- Funcionalidad de Eliminar Gasto ---
+// Añadir un Event Listener al elemento <ul> 'gastosListUl' y usar delegación de eventos.
+// Esto significa que el listener está en el padre (la lista), pero detecta clics en sus hijos (los botones).
+gastosListUl.addEventListener('click', (e) => {
+    // Comprobar si el elemento en el que se hizo clic (e.target) tiene la clase 'delete-btn'
+    if (e.target.classList.contains('delete-btn')) {
+        // Encontrar el elemento <li> más cercano al elemento clickeado (es decir, el contenedor del gasto)
+        const liElement = e.target.closest('li');
+        // Obtener el valor del atributo 'data-id' de ese elemento <li>
+        const gastoId = liElement ? liElement.dataset.id : null;
+
+        // Si se encontró un ID de gasto
+        if (gastoId) {
+            // Opcional: Pedir confirmación al usuario antes de eliminar
+            if (confirm("¿Estás seguro de eliminar este gasto?")) {
+                 eliminarGasto(gastoId); // Llamar a la función para eliminar el gasto
+            }
+        }
+    }
+});
+
+// Función para eliminar un gasto del array 'gastos' por su ID y luego actualizar la interfaz.
+function eliminarGasto(id) {
+     // Filtrar el array 'gastos': crea un nuevo array que incluye solo los gastos cuyo ID no coincide con el ID a eliminar.
+     // Convertimos ambos IDs a string para asegurar una comparación correcta, ya que los atributos de datos (`dataset.id`) son strings.
+     gastos = gastos.filter(gasto => String(gasto.id) !== String(id));
+
+     // Llamar a la función guardarDatos para:
+     // 1. Guardar el array 'gastos' modificado en localStorage.
+     // 2. Actualizar automáticamente los saldos, la lista de gastos, el gráfico y el calendario.
+     guardarDatos();
+     // Las siguientes llamadas no son necesarias aquí porque guardarDatos() ya se encarga de ellas:
+     // actualizarSaldos();
+     // renderizarGastos();
+     // renderizarGraficos();
+     // renderizarCalendario();
+}
+
+
+// --- Funciones para Renderizar Gráficos (Chart.js) ---
+
+// Prepara los datos para un gráfico de barras que compara el Salario Total vs. Gastos Totales.
+function aggregateTotalIncomeVsExpenses() {
+    // Usar la función existente para obtener el total de gastos como un número.
+    const totalGastos = calcularGastosTotales();
+
+    // El total del salario ya está disponible en la variable global `salarioTotal` (es un número o 0).
+
+    // Definir las etiquetas que aparecerán en el eje X del gráfico.
+    const labels = ['Salario Total', 'Gastos Totales'];
+    // Definir los datos correspondientes para cada etiqueta (los montos).
+    // Asegurarse de que `salarioTotal` sea un número válido para el gráfico.
+    const data = [parseFloat(salarioTotal) || 0, totalGastos]; // [Monto del Salario, Monto Total de Gastos]
+
+    // Retornar un objeto que Chart.js espera: un array de 'labels' y un array de 'data'.
+    return { labels, data };
+}
+
+
+// Renderiza el gráfico de barras comparativo (Salario Total vs Gastos Totales) usando la librería Chart.js.
+function renderizarGraficos() {
+    // Verificar si el elemento <canvas> con el ID 'gastosChart' existe en el HTML.
+    // Si no existe, no se puede dibujar el gráfico, mostrar un error en consola y salir.
+    if (!gastosChartCanvas) {
+        console.error("Elemento #gastosChart no encontrado en el HTML. No se puede renderizar el gráfico.");
+        return; // Salir de la función
+    }
+
+    // Obtener el contexto de dibujo 2D del elemento canvas. Chart.js necesita esto.
+    const ctx = gastosChartCanvas.getContext('2d');
+
+    // Destruir cualquier instancia previa del gráfico que pueda existir en este canvas.
+    // Esto es crucial para evitar fugas de memoria y errores cuando se actualiza el gráfico.
+    if (myChart) {
+        myChart.destroy();
+    }
+
+    // Obtener los datos preparados para el gráfico (etiquetas y montos).
+    const { labels, data } = aggregateTotalIncomeVsExpenses();
+
+    // Calcular la suma total de los datos para decidir si hay suficiente información para mostrar un gráfico.
+    // Si la suma es 0, significa que tanto el salario como los gastos totales son 0.
+    const totalSum = data.reduce((sum, value) => sum + value, 0);
+
+    // Encontrar la sección de gráficos y el elemento <p class="note"> dentro de ella, si existen.
+    const chartsSection = document.querySelector('.charts-section');
+    const noteElement = chartsSection ? chartsSection.querySelector('.note') : null;
+
+    // Si la suma total de los datos es 0, ocultar el canvas del gráfico y mostrar la nota informativa.
+    if (totalSum === 0) {
+         if (noteElement) {
+             noteElement.style.display = 'block'; // Mostrar la nota
+         }
+         gastosChartCanvas.style.display = 'none'; // Ocultar el elemento canvas del gráfico
+         return; // Salir de la función, no hay gráfico que dibujar
+    }
+
+    // Si hay datos (suma total > 0), asegurarse de que el canvas esté visible y la nota oculta.
+    gastosChartCanvas.style.display = 'block'; // Mostrar el elemento canvas
+    if (noteElement) {
+        noteElement.style.display = 'none'; // Ocultar la nota
+    }
+
+    // --- Crear la nueva instancia del gráfico de BARRAS comparativo ---
+    myChart = new Chart(ctx, {
+        type: 'bar', // Especificar que será un gráfico de barras
+        data: {
+            labels: labels, // Usar las etiquetas ['Salario Total', 'Gastos Totales'] para el eje X
+            datasets: [{
+                label: 'Monto', // Una etiqueta general para este conjunto de datos de barras
+                data: data, // Usar los datos numéricos [salarioTotal, totalGastos] para la altura de las barras
+                // Definir los colores de fondo para cada barra (verde para Salario, rojo para Gastos)
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.6)', // Verde con transparencia
+                    'rgba(220, 53, 69, 0.6)' // Rojo con transparencia
+                ],
+                // Definir los colores del borde para cada barra
+                borderColor: [
+                    'rgba(40, 167, 69, 1)', // Verde sólido
+                    'rgba(220, 53, 69, 1)' // Rojo sólido
+                ],
+                borderWidth: 1 // Ancho del borde de las barras
+            }]
+        },
+        options: {
+            responsive: true, // El gráfico se redimensionará automáticamente con el tamaño del contenedor
+            maintainAspectRatio: true, // Mantener la relación de aspecto del canvas durante el redimensionamiento
+            scales: {
+                y: { // Configuración del Eje Y (vertical)
+                    beginAtZero: true, // La escala del eje Y siempre empieza en 0
+                    title: {
+                        display: true,
+                        text: 'Monto (' + currencyCode + ')' // Etiqueta del eje Y con el código de moneda configurado
+                    },
+                    // Formatear las etiquetas numéricas del eje Y como moneda
+                    ticks: {
+                         callback: function(value) {
+                             // Usa la función formatCurrency para formatear el valor del tick
+                             return formatCurrency(value);
+                         }
+                    }
+                },
+                x: { // Configuración del Eje X (horizontal)
+                     display: true // Asegurarse de que el eje X se muestre
+                     // No se necesita un título adicional aquí ya que las etiquetas (Salario Total, Gastos Totales) ya son claras
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // Ocultar la leyenda, ya que las etiquetas de las barras y sus colores son autoexplicativos
+                },
+                title: {
+                    display: false // Ocultar el título interno del gráfico, ya tenemos un <h2> en el HTML
+                },
+                tooltip: { // Configuración de los tooltips (cuadros de información al pasar el mouse sobre las barras)
+                    callbacks: {
+                         label: function(context) {
+                             // context.label es la etiqueta del punto (ej: 'Salario Total')
+                             const label = context.label || '';
+                             // context.parsed.y es el valor numérico del punto (la altura de la barra)
+                             const value = context.parsed.y;
+
+                             // Si la etiqueta y el valor son válidos
+                             if (label && value !== null) {
+                                // Retornar el texto que se mostrará en el tooltip
+                                return `${label}: ${formatCurrency(value)}`; // Formatear el valor como moneda
+                             }
+                             return ''; // No mostrar nada si no hay información válida
+                         }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+// --- Funciones para Renderizar Calendario Básico ---
+
+// Retorna un Set (un conjunto de valores únicos) con todas las fechas de los gastos registrados, en formato 'YYYY-MM-DD'.
+function getExpenseDates() {
+    const dates = new Set(); // Crear un Set vacío para almacenar fechas únicas
+
+    // Asegurar que 'gastos' es un array antes de procesarlo
+     if (!Array.isArray(gastos)) {
+        return dates; // Retornar un Set vacío si 'gastos' no es un array válido
+    }
+
+    // Iterar sobre cada objeto gasto en el array 'gastos'
+    gastos.forEach(gasto => {
+        // Verificar si el gasto tiene una propiedad 'fecha', si es un string,
+        // y si el string coincide con el formato 'YYYY-MM-DD' usando una expresión regular.
+        if (gasto.fecha && typeof gasto.fecha === 'string' && gasto.fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            dates.add(gasto.fecha); // Añadir la fecha (si es válida y en el formato correcto) al Set. Los Sets automáticamente manejan duplicados.
+        }
+    });
+    return dates; // Retornar el Set que contiene todas las fechas únicas con gastos.
+}
+
+// Renderiza una tabla de calendario básica para el mes actual y resalta los días que tienen gastos.
+function renderizarCalendario() {
+     // Verificar si el elemento contenedor del calendario existe en el HTML.
+     // Si no existe, mostrar un error en consola y salir.
+    if (!calendarContainerDiv) {
+        console.error("Elemento #calendarContainer no encontrado en el HTML. No se puede renderizar el calendario.");
+        return; // Salir de la función
+    }
+
+    // Limpiar cualquier contenido previo dentro del contenedor del calendario.
+    calendarContainerDiv.innerHTML = '';
+
+    // Obtener el año y mes actual para mostrar el calendario de este mes.
+    const now = new Date(); // Crea un objeto Date con la fecha y hora actuales.
+    const year = now.getFullYear(); // Obtiene el año completo (ej: 2023).
+    const month = now.getMonth(); // Obtiene el mes (0 para Enero, 11 para Diciembre).
+
+    // Obtener el Set de fechas que tienen gastos para saber qué días resaltar.
+    const expenseDates = getExpenseDates();
+
+    // Nombres de los meses y días de la semana para mostrarlos en el calendario.
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    // --- Crear y añadir el encabezado del calendario (Mes Año) ---
+    const header = document.createElement('div'); // Crea un nuevo elemento <div>
+    header.classList.add('calendar-header'); // Añade la clase CSS para el estilo del encabezado.
+    header.textContent = `${monthNames[month]} ${year}`; // Establece el texto del encabezado (ej: Noviembre 2023).
+    calendarContainerDiv.appendChild(header); // Añade el encabezado al contenedor del calendario.
+
+    // --- Crear y añadir la tabla <table> para el calendario ---
+    const table = document.createElement('table'); // Crea un nuevo elemento <table>
+    table.classList.add('calendar'); // Añade la clase CSS para el estilo de la tabla.
+    calendarContainerDiv.appendChild(table); // Añade la tabla al contenedor del calendario.
+
+    // --- Crear y añadir el encabezado de la tabla (días de la semana: Dom, Lun, ...) ---
+    const thead = document.createElement('thead'); // Crea un nuevo elemento <thead>
+    const headerRow = document.createElement('tr'); // Crea una nueva fila <tr> para los nombres de los días.
+    // Itera sobre los nombres de los días de la semana
+    dayNames.forEach(dayName => {
+        const th = document.createElement('th'); // Crea una celda de encabezado <th> para cada día.
+        th.textContent = dayName; // Establece el texto de la celda (ej: "Dom").
+        headerRow.appendChild(th); // Añade la celda a la fila de encabezado.
+    });
+    thead.appendChild(headerRow); // Añade la fila de encabezado al thead.
+    table.appendChild(thead); // Añade el thead a la tabla.
+
+    // --- Crear el cuerpo de la tabla (los días del mes) ---
+    const tbody = document.createElement('tbody'); // Crea un nuevo elemento <tbody>
+    table.appendChild(tbody); // Añade el tbody a la tabla.
+
+    // --- Lógica para generar los días del calendario ---
+    // Calcular el día de la semana en que empieza el mes (0=Dom, 6=Sáb)
+    const firstDayOfMonth = new Date(year, month, 1); // Crea un objeto Date para el 1ro del mes actual.
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // Obtiene el día de la semana (0-6).
+
+    // Calcular el número total de días en el mes actual.
+    // Date(año, mes + 1, 0) da la fecha del último día del mes actual. getDate() obtiene el número del día.
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let dayCounter = 1; // Contador que se usará para ir del día 1 al último día del mes.
+
+    // Calcular el número total de celdas que se necesitarán en la tabla (incluyendo las vacías al inicio).
+    const totalCells = startingDayOfWeek + daysInMonth;
+    // Calcular cuántas filas (semanas) se necesitarán en la tabla (redondeando hacia arriba). Un mes puede ocupar hasta 6 semanas.
+    const numRows = Math.ceil(totalCells / 7);
+
+    // Crear filas para cada semana necesaria.
+    for (let i = 0; i < numRows; i++) { // Bucle para crear las filas (semanas)
+        const weekRow = document.createElement('tr'); // Crea una nueva fila (<tr>).
+
+        // Crear celdas para cada día de la semana (7 celdas por fila).
+        for (let j = 0; j < 7; j++) { // Bucle para crear las celdas (<td>) dentro de la fila.
+            const dayCell = document.createElement('td'); // Crea una nueva celda (<td>).
+
+            // --- Llenar las primeras celdas vacías ---
+            // Esto ocurre en la primera fila (i === 0) y antes del día de la semana en que empieza el mes (j < startingDayOfWeek).
+            if (i === 0 && j < startingDayOfWeek) {
+                dayCell.classList.add('empty'); // Añade la clase CSS 'empty' para estilizar la celda vacía.
+            }
+            // --- Llenar las celdas con los días del mes ---
+            // Esto ocurre mientras el contador de días (dayCounter) sea menor o igual al total de días en el mes.
+            else if (dayCounter <= daysInMonth) {
+
+                 // --- Mostrar el número del día dentro de la celda ---
+                 const dayNumberSpan = document.createElement('span'); // Crea un elemento <span> para el número del día.
+                 dayNumberSpan.classList.add('day-number'); // Añade la clase CSS 'day-number' para estilo.
+                 dayNumberSpan.textContent = dayCounter; // Establece el texto del span al número del día actual (1, 2, 3...).
+                 dayCell.appendChild(dayNumberSpan); // Añade el span a la celda.
+
+                // --- Formatear la fecha completa del día actual para comparación ---
+                // Se necesita el formato 'YYYY-MM-DD' para comparar con las fechas del Set `expenseDates`.
+                const monthFormatted = (month + 1).toString().padStart(2, '0'); // Obtiene el mes (1-12) y lo formatea a 2 dígitos (ej: 01, 11).
+                const dayFormatted = dayCounter.toString().padStart(2, '0'); // Obtiene el número del día (1-31) y lo formatea a 2 dígitos (ej: 01, 15).
+                const fullDate = `${year}-${monthFormatted}-${dayFormatted}`; // Combina año, mes y día en el formato 'YYYY-MM-DD'.
+
+                // --- Resaltar la celda si hay un gasto en esta fecha ---
+                // Comprueba si la fecha completa del día actual existe en el Set `expenseDates`.
+                if (expenseDates.has(fullDate)) {
+                    dayCell.classList.add('has-expense'); // Si la fecha está en el Set, añade la clase CSS 'has-expense' para resaltarla.
+                    // Opcional: Podrías añadir aquí un pequeño indicador visual dentro de la celda
+                    // o un evento de clic para mostrar los gastos de ese día en detalle.
+                    // Ejemplo de indicador visual (necesita CSS para .expense-indicator):
+                    // const indicator = document.createElement('span');
+                    // indicator.classList.add('expense-indicator');
+                    // dayCell.appendChild(indicator);
+                }
+
+                dayCounter++; // Incrementar el contador al siguiente día del mes para el próximo ciclo.
+
+            } else {
+                 // --- Llenar las últimas celdas vacías ---
+                 // Esto ocurre en las filas después de que todos los días del mes han sido añadidos.
+                 dayCell.classList.add('empty'); // Añade la clase CSS 'empty' para estilizar la celda vacía.
+            }
+            weekRow.appendChild(dayCell); // Añadir la celda creada (vacía o con día/número) a la fila actual (semana).
+        }
+         // Añadir la fila (semana) completa al cuerpo de la tabla (tbody).
+        // Se añade la fila incluso si está vacía después de la última semana del mes para completar la estructura de 6 semanas si es necesario visualmente.
+         tbody.appendChild(weekRow);
+
+        // Si el contador de días ya ha superado el número total de días en el mes,
+        // significa que ya hemos llenado todas las celdas con días del mes actual,
+        // así que podemos parar de crear más filas.
+        if (dayCounter > daysInMonth) {
+            break; // Salir del bucle que crea las filas (semanas).
+        }
+    }
+
+    // Opcional: Añadir un mensaje dentro del calendario si no hay días para mostrar (muy raro para un mes real)
+     if(tbody.children.length === 0 && numRows > 0) {
+         const emptyRow = document.createElement('tr');
+         const emptyCell = document.createElement('td');
+         emptyCell.colSpan = 7; // La celda ocupa las 7 columnas
+         emptyCell.textContent = 'No hay días para mostrar en este mes.';
+         emptyCell.style.textAlign = 'center';
+         emptyRow.appendChild(emptyCell);
+         tbody.appendChild(emptyRow);
+     }
+     // Si numRows es 0, el tbody estará vacío y el contenedor también, la nota en HTML puede ser suficiente.
+}
+
+
+// --- Event Listeners (Manejo de Eventos) ---
+
+// Evento que se dispara cuando se hace clic en el botón "Guardar Salario".
+guardarSalarioBtn.addEventListener('click', () => {
+    const monto = parseFloat(salarioMontoInput.value); // Obtener el valor del input y convertirlo a número flotante.
+    if (!isNaN(monto) && monto >= 0) { // Validar que el valor sea un número válido y no negativo.
+        salarioTotal = monto; // Actualizar la variable global `salarioTotal` con el nuevo monto.
+        guardarDatos(); // Llamar a la función `guardarDatos` para guardar en localStorage y actualizar la interfaz completa.
+        salarioMontoInput.value = ''; // Limpiar el campo de input del salario después de guardarlo.
+    } else {
+        // Mostrar una alerta si la entrada del salario no es válida.
+        alert('Por favor, ingresa un monto de salario válido (un número mayor o igual a cero).');
+    }
+});
+
+// Evento que se dispara cuando se envía el formulario de registro de gasto.
+gastoForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevenir el comportamiento por defecto del navegador al enviar un formulario (evita que la página se recargue).
+
+    // Obtener los valores de los campos del formulario de gasto.
+    const descripcion = gastoDescripcionInput.value.trim(); // Obtener la descripción, quitando espacios al inicio y fin.
+    const monto = parseFloat(gastoMontoInput.value); // Obtener el monto y convertirlo a número flotante.
+    const fecha = gastoFechaInput.value; // Obtener la fecha (el input type="date" ya da el formato YYYY-MM-DD).
+
+    // Validar que la descripción no esté vacía, el monto sea un número mayor a 0, y la fecha esté seleccionada.
+    if (descripcion && !isNaN(monto) && monto > 0 && fecha) {
+        // Crear un nuevo objeto para representar el gasto.
+        const nuevoGasto = {
+            id: Date.now() + Math.random(), // Generar un ID único simple para este gasto (timestamp + número aleatorio).
+            descripcion: descripcion, // La descripción ingresada.
+            monto: monto, // El monto ingresado (como número antes de guardar).
+            fecha: fecha // La fecha seleccionada.
+        };
+
+        gastos.push(nuevoGasto); // Añadir el nuevo objeto gasto al final del array global `gastos`.
+
+        guardarDatos(); // Llamar a la función `guardarDatos` para:
+                        // 1. Guardar el array `gastos` actualizado en localStorage.
+                        // 2. Refrescar automáticamente toda la interfaz (saldos, lista, gráfico, calendario).
+
+        // Limpiar el formulario de registro de gasto después de añadir el gasto.
+        gastoForm.reset();
+        // Opcional: Poner el foco de vuelta en el campo de descripción para facilitar el siguiente registro.
+        gastoDescripcionInput.focus();
+        // Volver a poner la fecha actual en el input de fecha después de resetear el formulario.
+        // Esto asegura que el input de fecha siempre tenga la fecha actual por defecto para el próximo gasto.
+        // Es importante hacerlo DESPUÉS de `gastoForm.reset()` porque reset borraría el valor.
+        gastoFechaInput.valueAsDate = new Date(); // Establece la fecha actual como valor del input.
+
+
+    } else {
+        // Si la validación falla, construir y mostrar un mensaje de error más específico.
+         let errorMessage = 'Por favor, completa todos los campos del gasto.'; // Mensaje por defecto.
+         if (isNaN(monto) || monto <= 0) {
+              errorMessage = 'Por favor, ingresa un monto de gasto válido y mayor a cero.'; // Si el monto es el problema.
+         } else if (!fecha) {
+              errorMessage = 'Por favor, selecciona una fecha para el gasto.'; // Si falta la fecha.
+         } else if (!descripcion) {
+              errorMessage = 'Por favor, ingresa una descripción para el gasto.'; // Si falta la descripción.
+         }
+        alert(errorMessage); // Muestra la alerta con el mensaje de error.
+    }
+});
+
+// El Event Listener para eliminar gastos se adjunta al elemento <ul> 'gastosListUl' y usa delegación (definido arriba).
+
+
+// --- Inicialización de la Aplicación ---
+// Esta es la función principal que se ejecuta cuando la página se carga completamente.
+function init() {
+    // 1. Cargar los datos guardados desde el almacenamiento local del navegador al iniciar la aplicación.
+    cargarDatos();
+
+    // 2. Poner la fecha actual en el campo de input de fecha del formulario de gasto automáticamente.
+    // Esto asegura que el usuario no tenga que seleccionar la fecha cada vez si la mayoría de gastos son de hoy.
+    gastoFechaInput.valueAsDate = new Date(); // Establece el valor del input date a la fecha actual.
+
+    // 3. Renderizar todos los componentes de la interfaz para mostrar los datos cargados.
+    actualizarSaldos(); // Actualiza los displays de salario, total de gastos y saldo restante.
+    renderizarGastos(); // Dibuja la lista de todos los gastos registrados.
+    renderizarGraficos(); // Dibuja el gráfico comparativo de Salario vs Gastos.
+    renderizarCalendario(); // Dibuja el calendario del mes actual con los días de gasto resaltados.
+
+    // 4. Opcional: Establecer el foco (cursor) en el primer campo del formulario de gasto (descripción) al cargar la página.
+    // Esto permite al usuario empezar a escribir la descripción del gasto inmediatamente sin tener que hacer clic en el campo.
+    gastoDescripcionInput.focus();
+}
+
+// Añadir un Event Listener al documento para ejecutar la función 'init' cuando el DOM (estructura HTML) esté completamente cargado y parseado.
+// Esto asegura que todos los elementos HTML referenciados en el script ya existan cuando se intenta acceder a ellos.
+document.addEventListener('DOMContentLoaded', init);
+
+
+/* --- Resumen de las funcionalidades de Gráfico y Calendario implementadas ---
+
+Gráfico:
+- Tipo: Gráfico de BARRAS.
+- Contenido: Compara visualmente dos valores: el MONTO TOTAL del salario que has ingresado y el MONTO TOTAL de todos los gastos que has registrado.
+- Propósito: Da una idea rápida de tu situación financiera general (ingresos totales vs gastos totales).
+- Librería: Utiliza Chart.js para dibujar este gráfico.
+- Actualización: Se actualiza automáticamente cada vez que guardas un salario, añades un gasto o eliminas un gasto.
+
+Calendario:
+- Tipo: Calendario BÁSICO estático.
+- Contenido: Muestra los días del MES ACTUAL.
+- Resaltado: Marca (con un fondo diferente) los días específicos en los que registraste al menos un gasto.
+- Propósito: Ayuda a visualizar rápidamente en qué días tuviste actividad de gastos.
+- Navegación: Este calendario NO tiene botones para navegar a meses anteriores o futuros. Siempre muestra el mes en curso.
+- Detalles: NO muestra los montos o descripciones de los gastos dentro de las celdas del calendario, solo marca el día.
+- Implementación: Está construido manualmente con JavaScript, creando elementos de tabla HTML.
+- Actualización: Se actualiza automáticamente cada vez que registras un gasto con una fecha en el mes actual o eliminas un gasto de una fecha del mes actual.
+
+Ambas implementaciones cumplen la descripción de mostrar "todas las cosas que se cargar, como el salario o las cosas que se van gastando" (como una comparativa total en el gráfico) y "en el calendario este marcado cuando se gasto" (resaltando el día en el calendario).
+
+Si necesitas funcionalidades más avanzadas, como:
+- Gráficos de gastos por mes o por categoría.
+- Calendario navegable (para ver meses pasados/futuros).
+- Ver los detalles de los gastos al hacer clic en un día del calendario.
+- Presupuestos por categoría.
+- Notificaciones/avisos.
+...estas requerirían añadir más código JavaScript y estructuras de datos más complejas (como añadir un campo de categoría a los gastos), lo cual aumentaría la complejidad de la aplicación.
+
+*/
+// ... (previous DOM references and variables) ...
+
+// --- Configuración de Moneda (¡AJUSTA ESTO SEGÚN TU PAÍS Y MONEDA!) ---
+// ... (same as before) ...
+
+// --- Funciones de Utilidad: Formatear Moneda y Fecha ---
+// ... (same as before) ...
+
+// --- Funciones para Cargar y Guardar datos en localStorage ---
+// ... (same as before) ...
+
+// --- Funciones para Actualizar la Interfaz y Cálculos ---
+// ... (calcularGastosTotales, calcularSaldoRestante, actualizarSaldos, renderizarGastos - same as before) ...
+
+// --- Funcionalidad de Eliminar Gasto ---
+// ... (event listener for delete, eliminarGasto - same as before) ...
+
+// --- Funciones para Renderizar Gráficos (Chart.js) ---
+// ... (aggregateExpensesByMonth, renderizarGraficos - same as before) ...
+
+
+// --- Funciones para Renderizar Calendario Básico y Manejar Clics/Interacción ---
+
+// Retorna un Set con todas las fechas de los gastos registrados, en formato 'YYYY-MM-DD'.
+function getExpenseDates() {
+    const dates = new Set();
+     if (!Array.isArray(gastos)) {
+        return dates;
+    }
+    gastos.forEach(gasto => {
+        if (gasto.fecha && typeof gasto.fecha === 'string' && gasto.fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            dates.add(gasto.fecha);
+        }
+    });
+    return dates;
+}
+
+// Renderiza una tabla de calendario básica para el mes actual y resalta los días con gastos.
+// Ahora también añade un evento de clic a las celdas resaltadas para mostrar el modal.
+function renderizarCalendario() {
+    if (!calendarContainerDiv) {
+        console.error("Elemento #calendarContainer no encontrado. No se puede renderizar el calendario.");
+        return;
+    }
+
+    calendarContainerDiv.innerHTML = '';
+
+    const expenseDates = getExpenseDates();
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-indexed
+
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    // --- Encabezado (Mes Año) ---
+    const header = document.createElement('div');
+    header.classList.add('calendar-header');
+    header.textContent = `${monthNames[month]} ${year}`;
+    calendarContainerDiv.appendChild(header);
+
+    // --- Tabla del calendario ---
+    const table = document.createElement('table');
+    table.classList.add('calendar');
+    calendarContainerDiv.appendChild(table);
+
+    // --- Encabezado de días de la semana ---
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    dayNames.forEach(dayName => {
+        const th = document.createElement('th');
+        th.textContent = dayName;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // --- Cuerpo del calendario (días) ---
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    // Lógica para generar días
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // 0=Dom
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Último día del mes
+
+    let dayCounter = 1;
+    const totalCells = startingDayOfWeek + daysInMonth;
+    const numRows = Math.ceil(totalCells / 7); // Calcula cuántas semanas se necesitan
+
+    // Crear filas (semanas)
+    for (let i = 0; i < numRows; i++) {
+        const weekRow = document.createElement('tr');
+
+        // Crear celdas (días)
+        for (let j = 0; j < 7; j++) {
+            const dayCell = document.createElement('td');
+
+            // Celdas vacías al inicio del mes
+            if (i === 0 && j < startingDayOfWeek) {
+                dayCell.classList.add('empty');
+            }
+            // Días del mes
+            else if (dayCounter <= daysInMonth) {
+                 const dayNumberSpan = document.createElement('span');
+                 dayNumberSpan.classList.add('day-number');
+                 dayNumberSpan.textContent = dayCounter;
+                 dayCell.appendChild(dayNumberSpan);
+
+                // Formatear la fecha 'YYYY-MM-DD' para este día
+                const monthFormatted = (month + 1).toString().padStart(2, '0');
+                const dayFormatted = dayCounter.toString().padStart(2, '0');
+                const fullDate = `${year}-${monthFormatted}-${dayFormatted}`;
+
+                // Si hay gasto en esta fecha, resaltar la celda y añadir evento de clic
+                if (expenseDates.has(fullDate)) {
+                    dayCell.classList.add('has-expense'); // Añadir clase para resaltar
+
+                    // --- Añadir evento de clic a celdas con gastos ---
+                    // Este evento se mantiene para abrir el modal con los detalles
+                    dayCell.dataset.date = fullDate; // Guardar la fecha en el data-attribute
+                    dayCell.addEventListener('click', () => {
+                        // Cuando se hace clic, llamar a la función para mostrar gastos del día en el modal
+                        showExpensesForDate(fullDate);
+                    });
+                    // El efecto visual al "tocar por encima" (hover en desktop, posible primer toque en móvil)
+                    // se maneja directamente con CSS usando la pseudoclase :hover en la clase .has-expense
+                }
+
+                dayCounter++; // Siguiente día
+
+            } else {
+                 // Celdas vacías al final del mes
+                 dayCell.classList.add('empty');
+            }
+            weekRow.appendChild(dayCell); // Añadir celda a la fila
+        }
+        // Añadir fila a la tabla
+         tbody.appendChild(weekRow);
+
+        // Si ya hemos agregado todos los días, parar
+        if (dayCounter > daysInMonth) {
+            break;
+        }
+    }
+
+    // Opcional: mensaje si el calendario está vacío
+     if(tbody.children.length === 0 && numRows > 0) {
+         const emptyRow = document.createElement('tr');
+         const emptyCell = document.createElement('td');
+         emptyCell.colSpan = 7;
+         emptyCell.textContent = 'No hay días para mostrar en este mes.';
+         emptyCell.style.textAlign = 'center';
+         emptyRow.appendChild(emptyCell);
+         tbody.appendChild(emptyRow);
+     }
+}
+
+// --- Funciones para Manejar el Modal de Gastos Diarios ---
+
+// Muestra el modal de gastos y lo llena con los gastos de una fecha específica.
+function showExpensesForDate(date) {
+     if (!Array.isArray(gastos)) {
+         console.error("El array de gastos no es válido.");
+         return;
+     }
+
+    // Filtrar los gastos para obtener solo los de la fecha seleccionada
+    const dailyExpenses = gastos.filter(gasto => gasto.fecha === date);
+
+    // Limpiar la lista de gastos del modal
+    modalExpensesList.innerHTML = '';
+
+    // Formatear la fecha para el título del modal
+    modalDateTitle.textContent = `Gastos del ${formatDateForDisplay(date)}`;
+
+    let totalDaily = 0;
+
+    // Si hay gastos para esta fecha
+    if (dailyExpenses.length > 0) {
+        // Ocultar la nota de "no hay gastos"
+        modalNoExpensesNote.style.display = 'none';
+
+        // Ordenar los gastos del día por monto o descripción si se desea (opcional)
+        // dailyExpenses.sort((a, b) => parseFloat(a.monto) - parseFloat(b.monto)); // Ejemplo: ordenar por monto ascendente
+
+        // Llenar la lista del modal con cada gasto del día
+        dailyExpenses.forEach(gasto => {
+            const li = document.createElement('li');
+            const monto = parseFloat(gasto.monto);
+             if (!isNaN(monto)) {
+                li.innerHTML = `
+                    <span class="expense-desc">${gasto.descripcion}</span>
+                    <span class="expense-amount">-${formatCurrency(monto)}</span>
+                `;
+                modalExpensesList.appendChild(li);
+                totalDaily += monto; // Sumar al total diario
+             }
+        });
+
+        // Mostrar el total del día
+        document.getElementById('modalTotalForDay').style.display = 'block';
+        modalTotalForDay.textContent = formatCurrency(totalDaily);
+
+    } else {
+        // Si no hay gastos para esta fecha, mostrar la nota y ocultar la lista y el total
+        modalNoExpensesNote.style.display = 'block';
+        document.getElementById('modalTotalForDay').style.display = 'none';
+        modalExpensesList.innerHTML = ''; // Asegurar que la lista esté vacía
+    }
+
+    // Mostrar el modal (añadiendo la clase 'show')
+    expenseModal.classList.add('show');
+}
+
+// Oculta el modal de gastos.
+function hideModal() {
+    // Ocultar el modal (removiendo la clase 'show')
+    expenseModal.classList.remove('show');
+}
+
+// Añadir Event Listeners para cerrar el modal
+// Cuando se hace clic en el botón de cerrar
+modalCloseButton.addEventListener('click', hideModal);
+
+// Cuando se hace clic fuera del contenido del modal (en el fondo oscuro)
+expenseModal.addEventListener('click', (e) => {
+    if (e.target === expenseModal) { // Si el clic fue directamente en el div.modal
+        hideModal(); // Ocultar el modal
+    }
+});
+
+
+// --- Event Listeners (Manejo de Eventos) ---
+
+// Evento al hacer clic en el botón "Guardar Salario"
+guardarSalarioBtn.addEventListener('click', () => {
+    const monto = parseFloat(salarioMontoInput.value);
+    if (!isNaN(monto) && monto >= 0) {
+        salarioTotal = monto;
+        guardarDatos(); // Guarda y actualiza UI (incluyendo gráfico y calendario)
+        salarioMontoInput.value = '';
+        // showNotification('Salario guardado.', 'success'); // Opcional
+    } else {
+        alert('Por favor, ingresa un monto de salario válido (un número mayor o igual a cero).');
+    }
+});
+
+// Evento al enviar el formulario de registro de gasto
+gastoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const descripcion = gastoDescripcionInput.value.trim();
+    const monto = parseFloat(gastoMontoInput.value);
+    const fecha = gastoFechaInput.value;
+
+    // Validar campos
+    if (descripcion && !isNaN(monto) && monto > 0 && fecha) {
+        const nuevoGasto = {
+            id: Date.now() + Math.random(),
+            descripcion: descripcion,
+            monto: monto,
+            fecha: fecha
+        };
+
+        gastos.push(nuevoGasto);
+
+        guardarDatos(); // Guarda y actualiza UI
+
+        // Limpiar formulario y poner fecha actual
+        gastoForm.reset();
+        gastoDescripcionInput.focus();
+        gastoFechaInput.valueAsDate = new Date(); // Restablecer a la fecha actual
+
+        // showNotification('Gasto registrado con éxito.', 'success'); // Opcional
+
+    } else {
+         let errorMessage = 'Por favor, completa todos los campos del gasto.';
+         if (isNaN(monto) || monto <= 0) {
+              errorMessage = 'Por favor, ingresa un monto de gasto válido y mayor a cero.';
+         } else if (!fecha) {
+              errorMessage = 'Por favor, selecciona una fecha para el gasto.';
+         } else if (!descripcion) {
+              errorMessage = 'Por favor, ingresa una descripción para el gasto.';
+         }
+        alert(errorMessage);
+    }
+});
+
+// Evento para eliminar gasto - Usa delegación de eventos en la lista <ul> (definido antes)
+
+
+// --- Inicialización de la Aplicación ---
+// Se ejecuta cuando el DOM esté completamente cargado.
+function init() {
+    // 1. Cargar los datos guardados
+    cargarDatos();
+
+    // 2. Poner la fecha actual en el input de fecha al cargar
+    gastoFechaInput.valueAsDate = new Date();
+
+    // 3. Renderizar todos los componentes con los datos cargados
+    actualizarSaldos();
+    renderizarGastos();
+    renderizarGraficos();
+    renderizarCalendario();
+
+    // 4. Poner foco en el primer campo de gasto
+    gastoDescripcionInput.focus();
+}
+
+// Ejecutar la función de inicialización cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
+
+/* --- Resumen de las funcionalidades de Gráfico, Calendario y Modal ---
+
+Gráfico:
+- Tipo: Gráfico de BARRAS.
+- Contenido: Muestra el total de gastos por MES.
+- Actualización: Se actualiza automáticamente con cambios en los gastos.
+
+Calendario:
+- Tipo: Calendario BÁSICO estático del MES ACTUAL.
+- Resaltado: Marca (con color de fondo) los días en los que hay gastos.
+- Interacción: Al pasar el mouse por encima (hover en desktop), la celda cambia de color para indicar que es interactiva.
+- **Acción al Clicar/Tocar:** Al hacer clic (o tocar en móvil) en un día marcado, se abre un MODAL.
+
+Modal:
+- Aparece al clicar/tocar un día con gastos en el calendario.
+- Muestra la fecha del día.
+- Lista cada uno de los gastos registrados para esa fecha específica (descripción y monto).
+- Muestra el total de los gastos para ese día.
+- Se cierra haciendo clic en el botón (X) o clicando/tocando fuera del contenido del modal.
+- **Adaptado a Móvil:** El modal está diseñado para ser responsive y verse bien en pantallas de diferentes tamaños.
+
+El código actual ya implementa la visualización al hacer clic en el día del calendario resaltado (usando el modal) y tiene estilos CSS para el hover que dan retroalimentación visual. Esta es la forma estándar y más amigable tanto en desktop como en dispositivos táctiles para mostrar información adicional sin saturar la vista principal o depender de un hover inestable en móvil.
+
+*/
+</script>
+    </body>
+</html>
